@@ -3,6 +3,7 @@ import api from "./client";
 
 type Message = {
   id: number;
+  direction: 'in' | 'out'
   content: {
     type: string;
     content:  {
@@ -16,13 +17,13 @@ type Message = {
 
 type ApiResponse = {
   data: Message[];
-  prevCursor: number | null;
+  prevCursorId: string | null;
 };
 
 // 🔹 Fetch messages (older on scroll up)
-export const fetchMessages = async ({ pageParam = null, handleId }: { pageParam: number | null, handleId: string }): Promise<ApiResponse> => {
+export const fetchMessages = async ({ pageParam = null, handleId }: { pageParam: string | null, handleId: string }): Promise<ApiResponse> => {
   const res = await api.get("/v1/messages", {
-    params: { cursor: pageParam, handleId },
+    params: { cursorId: pageParam, handleId },
   });
   return res.data;
 };

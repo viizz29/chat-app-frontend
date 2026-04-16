@@ -19,18 +19,21 @@ import { deleteMessages, fetchMessages, sendMessage } from "@/api/chat-message-a
 import { useSocket } from "@/features/home/socket-provider";
 
 
-interface Props{
+interface Props {
   handleId: string
 }
 
 
-const ChatUIExample: React.FC<Props> = ({handleId}) => {
+const ChatUIExample: React.FC<Props> = ({ handleId }) => {
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState<number[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  const shouldAutoScrollRef = useRef(true);
+  const prevScrollHeightRef = useRef(0);
 
   const socket = useSocket();
 
@@ -56,12 +59,18 @@ const ChatUIExample: React.FC<Props> = ({handleId}) => {
     status,
   } = useInfiniteQuery({
     queryKey: ["messages", handleId],
-    queryFn: (params: {pageParam: number | null}) => fetchMessages({...params, handleId}),
-    getNextPageParam: (lastPage) => lastPage.prevCursor,
+    queryFn: (params: { pageParam: string | null }) => fetchMessages({ ...params, handleId }),
+    getNextPageParam: (lastPage) => lastPage.prevCursorId,
     initialPageParam: null,
   });
 
-  const messages = data?.pages.flatMap((p) => p.data).reverse() ?? [];
+  // const messages = data?.pages.flatMap((p) => p.data).reverse() ?? [];
+  // const messages = data?.pages.flatMap((p) => p.data) ?? [];
+  const messages =
+    data?.pages
+      .slice()
+      .reverse()
+      .flatMap((p) => p.data) ?? [];
 
   // Send mutation
   const sendMutation = useMutation({
@@ -82,17 +91,56 @@ const ChatUIExample: React.FC<Props> = ({handleId}) => {
   });
 
   // Scroll to bottom on new messages
+  // useEffect(() => {
+  //   if (listRef.current) {
+  //     listRef.current.scrollTop = listRef.current.scrollHeight;
+  //   }
+  // }, [messages.length]);
+
+
   useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
+    const el = listRef.current;
+    if (!el) return;
+
+    const newScrollHeight = el.scrollHeight;
+
+    if (shouldAutoScrollRef.current) {
+      // User is at bottom → stick to bottom
+      el.scrollTop = newScrollHeight;
+    } else {
+      // User is reading old messages → preserve position
+      const diff = newScrollHeight - prevScrollHeightRef.current;
+      el.scrollTop += diff;
     }
-  }, [messages.length]);
+
+    prevScrollHeightRef.current = newScrollHeight;
+  }, [messages]);
+
 
   // Detect scroll top → load older messages
+  // const handleScroll = () => {
+  //   if (!listRef.current) return;
+
+  //   if (listRef.current.scrollTop === 0 && hasNextPage) {
+  //     fetchNextPage();
+  //   }
+  // };
+
   const handleScroll = () => {
     if (!listRef.current) return;
 
-    if (listRef.current.scrollTop === 0 && hasNextPage) {
+    const el = listRef.current;
+
+    // Detect near bottom
+    const threshold = 100;
+    const isNearBottom =
+      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+
+    shouldAutoScrollRef.current = isNearBottom;
+
+    // Load older messages
+    if (el.scrollTop === 0 && hasNextPage) {
+      prevScrollHeightRef.current = el.scrollHeight;
       fetchNextPage();
     }
   };
@@ -107,7 +155,7 @@ const ChatUIExample: React.FC<Props> = ({handleId}) => {
     sendMutation.mutate(formData);
 
     socket.test();
-  
+
   };
 
   // Send file
@@ -129,7 +177,7 @@ const ChatUIExample: React.FC<Props> = ({handleId}) => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" height="500px" border="1px solid #ccc">
+    <Box display="flex" flexDirection="column" height="700px" border="1px solid #ccc">
       {/* Header */}
       <Box p={1} display="flex" justifyContent="space-between">
         <Typography variant="h6">Chat</Typography>
@@ -151,6 +199,14 @@ const ChatUIExample: React.FC<Props> = ({handleId}) => {
         flex={1}
         overflow="auto"
         p={1}
+
+
+        display="flex"
+        flexDirection="column"
+        height="500px"
+        border="1px solid #ccc"
+        position="relative"   // 👈 important
+
       >
         {/* {status === "pending" && <CircularProgress />} */}
 
@@ -161,28 +217,56 @@ const ChatUIExample: React.FC<Props> = ({handleId}) => {
             <ListItem
               key={msg.id}
               dense
-              secondaryAction={
-                <Checkbox
-                  checked={selected.includes(msg.id)}
-                  onChange={() => toggleSelect(msg.id)} 
-                />
-              }
+            // secondaryAction={
+            //   <Checkbox
+            //     checked={selected.includes(msg.id)}
+            //     onChange={() => toggleSelect(msg.id)}
+            //   />
+            // }
             >
-              <ListItemText
-                primary={
-                  msg.content.type == "text" ? (
-                    msg.content.content.text
-                  ) : msg.content.content.fileUrl ? (
-                    <a href={msg.content.content.fileUrl} target="_blank" rel="noreferrer">
-                      {msg.content.content.fileType || "Attachment"}
-                    </a>
-                  ) : null
-                }
-                secondary={new Date(msg.createdAt).toLocaleString()}
-              />
+
+              <Box sx={msg.direction == 'in' ? {} : { ml: "auto", textAlign: 'right' }}>
+                <ListItemText
+                  primary={
+                    msg.content.type == "text" ? (
+                      msg.content.content.text
+                    ) : msg.content.content.fileUrl ? (
+                      <a href={msg.content.content.fileUrl} target="_blank" rel="noreferrer">
+                        {msg.content.content.fileType || "Attachment"}
+                      </a>
+                    ) : null
+                  }
+                  secondary={new Date(msg.createdAt).toLocaleString()}
+                />
+
+              </Box>
+
             </ListItem>
           ))}
         </List>
+
+        {!shouldAutoScrollRef.current && (
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              if (listRef.current) {
+                listRef.current.scrollTop = listRef.current.scrollHeight;
+              }
+            }}
+            sx={{
+              position: "absolute",
+              bottom: 70, // above input box
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 10,
+              borderRadius: "20px",
+              boxShadow: 3,
+            }}
+          >
+            New Messages ↓
+          </Button>
+        )}
       </Box>
 
       {/* Input */}

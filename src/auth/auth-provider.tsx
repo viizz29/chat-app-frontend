@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     (async () => {
       const storedToken = get("token") as string;
 
-     
+
       if (storedToken) {
         try {
           const decoded: User = jwtDecode(storedToken);
@@ -84,7 +84,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   return (
-    <AuthContext.Provider
+
+    isAuthReady ? <AuthContext.Provider
       value={{
         user,
         token,
@@ -95,6 +96,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </AuthContext.Provider>
+    </AuthContext.Provider> : <div>Loading ...</div>
   );
 };

@@ -19,7 +19,12 @@ import { deleteMessages, fetchMessages, sendMessage } from "@/api/chat-message-a
 import { useSocket } from "@/features/home/socket-provider";
 
 
-const ChatUIExample: React.FC = () => {
+interface Props{
+  handleId: string
+}
+
+
+const ChatUIExample: React.FC<Props> = ({handleId}) => {
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState("");
@@ -50,8 +55,8 @@ const ChatUIExample: React.FC = () => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["messages"],
-    queryFn: fetchMessages,
+    queryKey: ["messages", handleId],
+    queryFn: (params: {pageParam: number | null}) => fetchMessages({...params, handleId}),
     getNextPageParam: (lastPage) => lastPage.prevCursor,
     initialPageParam: null,
   });
@@ -159,17 +164,17 @@ const ChatUIExample: React.FC = () => {
               secondaryAction={
                 <Checkbox
                   checked={selected.includes(msg.id)}
-                  onChange={() => toggleSelect(msg.id)}
+                  onChange={() => toggleSelect(msg.id)} 
                 />
               }
             >
               <ListItemText
                 primary={
-                  msg.text ? (
-                    msg.text
-                  ) : msg.fileUrl ? (
-                    <a href={msg.fileUrl} target="_blank" rel="noreferrer">
-                      {msg.fileType || "Attachment"}
+                  msg.content.type == "text" ? (
+                    msg.content.content.text
+                  ) : msg.content.content.fileUrl ? (
+                    <a href={msg.content.content.fileUrl} target="_blank" rel="noreferrer">
+                      {msg.content.content.fileType || "Attachment"}
                     </a>
                   ) : null
                 }

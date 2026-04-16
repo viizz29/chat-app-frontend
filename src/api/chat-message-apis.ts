@@ -3,9 +3,14 @@ import api from "./client";
 
 type Message = {
   id: number;
-  text?: string;
-  fileUrl?: string;
-  fileType?: string;
+  content: {
+    type: string;
+    content:  {
+      text?: string;
+      fileUrl?: string;
+      fileType?: string;
+    }
+  }
   createdAt: string;
 };
 
@@ -15,9 +20,9 @@ type ApiResponse = {
 };
 
 // 🔹 Fetch messages (older on scroll up)
-export const fetchMessages = async ({ pageParam = null }: {pageParam: number | null}): Promise<ApiResponse> => {
+export const fetchMessages = async ({ pageParam = null, handleId }: { pageParam: number | null, handleId: string }): Promise<ApiResponse> => {
   const res = await api.get("/v1/messages", {
-    params: { cursor: pageParam },
+    params: { cursor: pageParam, handleId },
   });
   return res.data;
 };

@@ -24,9 +24,7 @@ const PageLayout = () => {
 
   const menuItems = [
     { label: "Home", path: "/" },
-    { label: "Connections", path: "/connections" },
-    { label: "Groups", path: "/groups" },
-    { label: "Settings", path: "/settings" },
+    // { label: "Settings", path: "/settings" },
   ];
 
   return (

@@ -17,6 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteMessages, fetchMessages, sendMessage } from "@/api/chat-message-apis";
 import { useSocket } from "@/features/home/socket-provider";
+import { toast } from "react-toastify";
 
 
 interface Props {
@@ -36,6 +37,24 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
   const prevScrollHeightRef = useRef(0);
 
   const socket = useSocket();
+
+
+  useEffect(() => {
+    if (socket) {
+      return socket.addEventListener('new_message', (payload) => {
+        const { roomId, content } = payload[0];
+
+        const { type } = content;
+        if (type == "text") {
+          toast.info(content.content?.text);
+        } else {
+          toast.info(JSON.stringify(content));
+        }
+
+
+      });
+    }
+  }, [socket]);
 
 
   // useEffect(() => {
@@ -177,7 +196,7 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" height="700px" border="1px solid #ccc">
+    <Box display="flex" flexDirection="column" height="500px" border="1px solid #ccc">
       {/* Header */}
       <Box p={1} display="flex" justifyContent="space-between">
         <Typography variant="h6">Chat</Typography>

@@ -1,9 +1,9 @@
 // SocketProvider.tsx
 import React, { createContext, useContext, useEffect } from "react";
-import { getSocket } from "./socket";
+import { getSocket, SocketConnection } from "./socket";
 import { useAuth } from "@/auth/use-auth";
 
-const SocketContext = createContext<any>(null);
+const SocketContext = createContext<SocketConnection | null>(null);
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 

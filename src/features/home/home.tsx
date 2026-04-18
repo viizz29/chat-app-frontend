@@ -1,14 +1,13 @@
 import { useTranslation } from "react-i18next";
-import { Typography } from "@mui/material";
 import ChatUIExample from "@/features/home/chatui-example";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getChatHandles, type ChatHandle } from "@/api/chat-handle-api";
+import { getRooms, type Room } from "@/api/room-api";
 import { Box, Grid, Paper, List, ListItemButton, ListItemText } from "@mui/material";
 import { useState } from "react";
 
 
 interface Props {
-  users: ChatHandle[],
+  users: Room[],
   onSelectUser: (userId: string) => void;
 }
 
@@ -29,12 +28,12 @@ const UserList: React.FC<Props> = ({ users, onSelectUser }) => {
 
 export default function Home() {
   const { t } = useTranslation();
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: chatHandles = [], isLoading } = useQuery({
     queryKey: ["chat-handles"],
-    queryFn: getChatHandles,
+    queryFn: getRooms,
   });
 
 
@@ -49,15 +48,15 @@ export default function Home() {
         {/* LEFT: User List */}
         <Grid size={{ xs: 4, md: 3, lg: 2 }}>
           <Paper sx={{ height: "100%", overflowY: "auto" }}>
-            <UserList users={chatHandles} onSelectUser={setSelectedUser} />
+            <UserList users={chatHandles} onSelectUser={setSelectedRoom} />
           </Paper>
         </Grid>
 
         {/* RIGHT: Chat Window */}
         <Grid size={{ xs: 8, md: 9, lg: 10 }}>
           <Paper sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-            {selectedUser ?
-              <ChatUIExample handleId={selectedUser} /> : <div>Select a handle.</div>}
+            {selectedRoom ?
+              <ChatUIExample roomId={selectedRoom} /> : <div>Select a chat handle.</div>}
           </Paper>
         </Grid>
 

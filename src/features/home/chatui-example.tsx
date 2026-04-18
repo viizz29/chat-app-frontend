@@ -20,11 +20,11 @@ import { useSocket } from "@/features/home/socket-provider";
 
 
 interface Props {
-  handleId: string
+  roomId: string
 }
 
 
-const ChatUIExample: React.FC<Props> = ({ handleId }) => {
+const ChatUIExample: React.FC<Props> = ({ roomId }) => {
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState("");
@@ -58,8 +58,8 @@ const ChatUIExample: React.FC<Props> = ({ handleId }) => {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["messages", handleId],
-    queryFn: (params: { pageParam: string | null }) => fetchMessages({ ...params, handleId }),
+    queryKey: ["messages", roomId],
+    queryFn: (params: { pageParam: string | null }) => fetchMessages({ ...params, roomId }),
     getNextPageParam: (lastPage) => lastPage.prevCursorId,
     initialPageParam: null,
   });
@@ -74,7 +74,7 @@ const ChatUIExample: React.FC<Props> = ({ handleId }) => {
 
   // Send mutation
   const sendMutation = useMutation({
-    mutationFn: sendMessage,
+    mutationFn: (formData: FormData) => sendMessage(roomId, formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["messages"] });
       setInput("");

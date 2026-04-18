@@ -21,16 +21,16 @@ type ApiResponse = {
 };
 
 // 🔹 Fetch messages (older on scroll up)
-export const fetchMessages = async ({ pageParam = null, handleId }: { pageParam: string | null, handleId: string }): Promise<ApiResponse> => {
+export const fetchMessages = async ({ pageParam = null, roomId }: { pageParam: string | null, roomId: string }): Promise<ApiResponse> => {
   const res = await api.get("/v1/messages", {
-    params: { cursorId: pageParam, handleId },
+    params: { cursorId: pageParam, roomId },
   });
   return res.data;
 };
 
 // 🔹 Send message
-export const sendMessage = async (formData: FormData) => {
-  const res = await api.post("/v1/messages", formData);
+export const sendMessage = async (handleId: string, formData: FormData) => {
+  const res = await api.post(`/v1/messages/${handleId}`, formData);
   return res.data;
 };
 

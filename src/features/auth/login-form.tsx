@@ -24,12 +24,12 @@ export default function LoginForm() {
 
     onError: (error) => {
       console.error(error);
-      alert("Invalid credentials" + JSON.stringify(error));
+      alert("Invalid credentials");
     },
   });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen">
       <Paper className="p-6 w-full max-w-md">
 
         <Typography variant="h5" className="mb-4">

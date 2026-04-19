@@ -96,6 +96,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-    </AuthContext.Provider> : <div>Loading ...</div>
+    </AuthContext.Provider> : <div>Loading auth state ...</div>
   );
 };

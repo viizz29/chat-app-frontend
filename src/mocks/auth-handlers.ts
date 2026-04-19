@@ -1,6 +1,5 @@
 import { http, HttpResponse } from "msw";
 
-
 interface User32 {
   email: string;
   password: string;
@@ -11,10 +10,9 @@ const users = [
   { id: 1, email: "admin@test.com", password: "1234", role: "admin" },
 ];
 
-
 // 🔐 LOGIN
 const login = http.post("/api/v1/auth/login", async ({ request }) => {
-  const body = await request.json() as User32;
+  const body = (await request.json()) as User32;
 
   // const user = users.find(
   //   (u) => u.email === body.email && u.password === body.password
@@ -39,16 +37,16 @@ const login = http.post("/api/v1/auth/login", async ({ request }) => {
   //   },
   // });
 
-
   return HttpResponse.json({
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzc1MjI4OTI2LCJleHAiOjE3ODM4Njg5MjZ9.GzGzr2_vf3zgVqt_irz7wE8wqxXSAWDKyrTqd2K8sgo",
-    "user": {
-      "id": 2,
-      "username": "user",
-      "role": "USER"
-    }
+    token:
+      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiaWF0IjoxNzc1MjI4OTI2LCJleHAiOjE3ODM4Njg5MjZ9.GzGzr2_vf3zgVqt_irz7wE8wqxXSAWDKyrTqd2K8sgo",
+    user: {
+      id: 2,
+      username: "user",
+      role: "USER",
+    },
   });
-})
+});
 
 // 📊 DASHBOARD
 const dashboard = http.get("/api/v1/dashboard", async () => {
@@ -58,11 +56,6 @@ const dashboard = http.get("/api/v1/dashboard", async () => {
     users: 120,
     sales: 540,
   });
-})
+});
 
-
-
-export const handlers = [
-  login,
-  dashboard,
-];
+export const handlers = [login, dashboard];

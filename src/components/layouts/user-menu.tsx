@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import ProfileLogo from "../../assets/react.svg";
 import { useAuth } from "../../auth/use-auth";
+import { useTranslation } from "react-i18next";
 
 const UserAvatarIcon = () => (
   <svg
@@ -37,6 +38,7 @@ const UserMenu: React.FC = () => {
   const { user, isAuthReady, logout } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { t } = useTranslation();
 
   const open = Boolean(anchorEl);
 
@@ -98,10 +100,9 @@ const UserMenu: React.FC = () => {
           >
             <Box px={2} py={1}>
               <Typography variant="body2">
-                Hello, {user?.sub || "User"}!
+                {t("hello", { name: user?.sub || "User" })}
               </Typography>
             </Box>
-
             <MenuItem
               onClick={() => {
                 handleClose();
@@ -109,7 +110,7 @@ const UserMenu: React.FC = () => {
               }}
               sx={{ color: "error.main" }}
             >
-              Logout
+              {t("logout")}
             </MenuItem>
           </Menu>
         </>

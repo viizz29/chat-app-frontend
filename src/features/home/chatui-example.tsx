@@ -19,6 +19,7 @@ import { deleteMessages, fetchMessages, sendMessage } from "@/api/chat-message-a
 import { useSocket } from "@/features/home/socket-provider";
 import { toast } from "react-toastify";
 import type { Room } from "@/api/room-api";
+import { useTranslation } from "react-i18next";
 
 
 interface Props {
@@ -29,6 +30,7 @@ interface Props {
 const ChatUIExample: React.FC<Props> = ({ room: { id: roomId, title: roomTitle } }) => {
   const queryClient = useQueryClient();
 
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [selected, setSelected] = useState<number[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -201,7 +203,7 @@ const ChatUIExample: React.FC<Props> = ({ room: { id: roomId, title: roomTitle }
     <Box display="flex" flexDirection="column" height="60vh" border="1px solid #ccc">
       {/* Header */}
       <Box p={1} display="flex" justifyContent="space-between">
-        <Typography variant="h6">Chatting with {roomTitle}</Typography>
+        <Typography variant="h6">{t("talking_to", { name: roomTitle })}</Typography>
         {selected.length > 0 && (
           <Button
             startIcon={<DeleteIcon />}
@@ -306,7 +308,7 @@ const ChatUIExample: React.FC<Props> = ({ room: { id: roomId, title: roomTitle }
         <TextField
           fullWidth
           size="small"
-          placeholder="Type a message..."
+          placeholder={t("type_a_message")}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {

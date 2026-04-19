@@ -12,12 +12,14 @@ import {
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { searchUsers, type UserRecord } from "@/api/user-api";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   onSelect: (user: UserRecord) => void;
 };
 
 const SearchWidget: React.FC<Props> = ({ onSelect }) => {
+  const { t } = useTranslation();
   const [input, setInput] = useState("");
   const [debounced, setDebounced] = useState("");
   const [open, setOpen] = useState(false);
@@ -52,7 +54,7 @@ const SearchWidget: React.FC<Props> = ({ onSelect }) => {
         <TextField
           fullWidth
           size="small"
-          placeholder="Search users..."
+          placeholder={t("search_users")}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onFocus={() => data.length > 0 && setOpen(true)}

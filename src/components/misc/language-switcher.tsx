@@ -36,9 +36,9 @@ export default function LanguageSwitcher() {
         onChange={handleChange}
       >
         <MenuItem value="en">English</MenuItem>
-        <MenuItem value="hi">Hindi</MenuItem>
-        <MenuItem value="bn">Bengali</MenuItem>
-        <MenuItem value="fr">French</MenuItem>
+        <MenuItem value="hi">हिंदी</MenuItem>
+        {/* <MenuItem value="bn">Bengali</MenuItem>
+        <MenuItem value="fr">French</MenuItem> */}
       </Select>
     </FormControl>
   );

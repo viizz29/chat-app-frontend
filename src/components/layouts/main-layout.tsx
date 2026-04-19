@@ -13,11 +13,13 @@ import {
 import { SidebarHeader } from "./siderbar-header-component";
 import { Header } from "./header-component";
 import { ActiveStocksIcon } from "@/assets/active-stocks-icon";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 
 const PageLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   const location = useLocation();
 
@@ -26,7 +28,7 @@ const PageLayout = () => {
   };
 
   const menuItems = [
-    { label: "Home", path: "/" },
+    { label: "home", path: "/" },
     // { label: "Settings", path: "/settings" },
   ];
 
@@ -77,7 +79,7 @@ const PageLayout = () => {
                 <ListItemIcon>
                   <ActiveStocksIcon strokeColor="#667085" />
                 </ListItemIcon>
-                <ListItemText primary={item.label} />
+                <ListItemText primary={t(item.label)} />
               </ListItemButton>
             ))}
           </List>

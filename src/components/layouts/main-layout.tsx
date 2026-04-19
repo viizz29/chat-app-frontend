@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import {
   Box,
   Drawer,
@@ -8,6 +8,7 @@ import {
   ListItemIcon,
   ListItemText
 } from "@mui/material";
+
 
 import { SidebarHeader } from "./siderbar-header-component";
 import { Header } from "./header-component";
@@ -18,6 +19,8 @@ const drawerWidth = 240;
 const PageLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
+  const location = useLocation();
+
   const toggleSidebar = () => {
     setIsSidebarOpen((prev) => !prev);
   };
@@ -26,6 +29,18 @@ const PageLayout = () => {
     { label: "Home", path: "/" },
     // { label: "Settings", path: "/settings" },
   ];
+
+  const isSelected = (path: string) => {
+    if (location && path) {
+      if (location.pathname.startsWith(`/${path}`)) {
+        return true;
+      } else if (location.pathname === path) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
 
   return (
     <Box sx={{ display: "flex", height: "100vh", bgcolor: "background.default" }}>
@@ -57,6 +72,7 @@ const PageLayout = () => {
                 component={Link}
                 to={item.path}
                 onClick={toggleSidebar}
+                selected={isSelected(item.path)}
               >
                 <ListItemIcon>
                   <ActiveStocksIcon strokeColor="#667085" />

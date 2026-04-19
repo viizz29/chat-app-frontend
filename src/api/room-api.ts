@@ -10,3 +10,7 @@ export const getRooms = async (): Promise<Room[]> => {
   return res.data;
 };
 
+
+export const createRoom = async (secondMemberId: string) => {
+  return api.post("/v1/rooms", { secondMemberId });
+};

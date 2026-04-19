@@ -1,4 +1,4 @@
-import type { Pagination } from "@/api/students-api";
+import type { Pagination } from "@/api/user-api";
 
 
 interface PaginationWidgetParams {

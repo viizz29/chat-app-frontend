@@ -4,8 +4,6 @@ import { useAuth } from "../auth/use-auth";
 
 // Layout
 import MainLayout from "../components/layouts/main-layout";
-import TodoPage from "../features/todo/todo-page";
-import ResumeBuilder from "@/features/resume-generator/resume-builder";
 
 // Lazy pages (code splitting)
 const Home = lazy(() => import("../features/home/home"));
@@ -57,8 +55,7 @@ export default function AppRoutes() {
           {/* Nested routes */}
           <Route index element={<Home />} />
           <Route path="/connections" element={<Dashboard />} />
-          <Route path="/groups" element={<TodoPage />} />
-          <Route path="/settings" element={<ResumeBuilder />} />
+          
         </Route>
 
         {/* Catch all */}

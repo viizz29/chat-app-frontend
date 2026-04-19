@@ -51,6 +51,7 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
           toast.info(JSON.stringify(content));
         }
 
+        queryClient.invalidateQueries({ queryKey: ["messages"] });
 
       });
     }

@@ -10,6 +10,29 @@ import {
 import ProfileLogo from "../../assets/react.svg";
 import { useAuth } from "../../auth/use-auth";
 
+const UserAvatarIcon = () => (
+  <svg
+    width="64"
+    height="64"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    {/* Background circle */}
+    <circle cx="12" cy="12" r="12" fill="#E0E0E0" />
+
+    {/* Head */}
+    <circle cx="12" cy="9" r="4" fill="#9E9E9E" />
+
+    {/* Shoulders */}
+    <path
+      d="M6 18c0-3.314 2.686-6 6-6s6 2.686 6 6"
+      fill="#9E9E9E"
+    />
+  </svg>
+);
+
+
+
 const UserMenu: React.FC = () => {
   const { user, isAuthReady, logout } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -48,7 +71,6 @@ const UserMenu: React.FC = () => {
       ) : (
         <>
           <Avatar
-            src={ProfileLogo}
             onClick={handleProfileClick}
             sx={{
               width: 40,
@@ -57,7 +79,9 @@ const UserMenu: React.FC = () => {
               border: "1px solid",
               borderColor: "divider",
             }}
-          />
+          >
+            <UserAvatarIcon />
+          </Avatar>
 
           <Menu
             anchorEl={anchorEl}

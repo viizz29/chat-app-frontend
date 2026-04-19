@@ -11,27 +11,28 @@ import Animation1 from "@/components/misc/animation1";
 
 
 interface Props {
-  users: Room[],
-  onSelectUser: (userId: string) => void;
+  rooms: Room[],
+  onRoomSelected: (room: Room) => void;
 }
 
 
 
-const UserList: React.FC<Props> = ({ users, onSelectUser }) => {
+const RoomList: React.FC<Props> = ({ rooms, onRoomSelected: onSelectUser }) => {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
-  const handleClick = (id: string) => {
-    setSelectedUserId(id);
-    onSelectUser(id);
+
+  const handleClick = (room: Room) => {
+    setSelectedUserId(room.id);
+    onSelectUser(room);
   };
 
   return (
     <List>
-      {users.map((user) => (
+      {rooms.map((user) => (
         <ListItemButton
           key={user.id}
           selected={selectedUserId === user.id}
-          onClick={() => handleClick(user.id)}
+          onClick={() => handleClick(user)}
         >
           <ListItemText primary={user.title} />
         </ListItemButton>
@@ -43,7 +44,7 @@ const UserList: React.FC<Props> = ({ users, onSelectUser }) => {
 
 export default function Home() {
   const { t } = useTranslation();
-  const [selectedRoom, setSelectedRoom] = useState<string | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const queryClient = useQueryClient();
 
   const { data: chatHandles = [], isLoading } = useQuery({
@@ -72,18 +73,25 @@ export default function Home() {
 
   return (
 
-    <Box sx={{ height: "100vh" }}>
-      <Box sx={{ alignContent: 'center' }}>
-        <SearchWidget onSelect={(user: UserRecord) => {
-          mutation.mutate(user);
-        }} />
+    <Box>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="top"
+        height="50px">
+        <div>
+          <SearchWidget onSelect={(user: UserRecord) => {
+            mutation.mutate(user);
+          }} />
+        </div>
+
       </Box>
-      <Grid container sx={{ height: "100%" }}>
+      <Grid container sx={{ height: "50%" }}>
 
         {/* LEFT: User List */}
         <Grid size={{ xs: 4, md: 3, lg: 2 }}>
           <Paper sx={{ height: "100%", overflowY: "auto" }}>
-            <UserList users={chatHandles} onSelectUser={setSelectedRoom} />
+            <RoomList rooms={chatHandles} onRoomSelected={setSelectedRoom} />
           </Paper>
         </Grid>
 
@@ -91,14 +99,14 @@ export default function Home() {
         <Grid size={{ xs: 8, md: 9, lg: 10 }}>
           <Paper sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
             {selectedRoom ?
-              <ChatUIExample roomId={selectedRoom} /> : <Box
+              <ChatUIExample room={selectedRoom} /> : <Box
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
                 height="500px"
               >
                 <div className="flex flex-col">
-                  <div>Select a chat handle.</div>
+                  <div>{t("select_chat_handle")}</div>
                   <Animation1 />
                 </div>
 

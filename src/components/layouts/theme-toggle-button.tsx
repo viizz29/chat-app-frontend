@@ -1,7 +1,9 @@
 import { useStorage } from "@/components/misc/local-storage-provider";
 import { useThemeController } from "@/theme/theme-context";
-import { Button } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 
 export const ThemeToggleButton = () => {
     const { toggleTheme } = useThemeController();
@@ -21,8 +23,8 @@ export const ThemeToggleButton = () => {
 
 
     const toggleMode = () => {
-         setDarkMode(!darkMode);
-         set("mode", !darkMode ? "dark" : "light");
+        setDarkMode(!darkMode);
+        set("mode", !darkMode ? "dark" : "light");
     }
 
 
@@ -31,12 +33,13 @@ export const ThemeToggleButton = () => {
         setDarkMode(mode == "dark");
     }, []);
 
+    const mode = get("mode") || "light";
 
     return (
-        <div onClick={() => toggleMode()} className="text-primaryTextColor border p-2 bg-primaryBackgroundColor">
-            <Button variant="contained">
-                Toggle Theme
-            </Button>
-        </div>
+        <Tooltip title={`Switch to ${mode === "light" ? "dark" : "light"} mode`}>
+            <IconButton color="inherit" onClick={toggleTheme}>
+                {mode === "light" ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton>
+        </Tooltip>
     );
 }

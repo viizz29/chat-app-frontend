@@ -52,7 +52,7 @@ const SearchWidget: React.FC<Props> = ({ onSelect }) => {
         <TextField
           fullWidth
           size="small"
-          placeholder="Search students..."
+          placeholder="Search users..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onFocus={() => data.length > 0 && setOpen(true)}

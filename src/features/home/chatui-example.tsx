@@ -18,14 +18,15 @@ import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { deleteMessages, fetchMessages, sendMessage } from "@/api/chat-message-apis";
 import { useSocket } from "@/features/home/socket-provider";
 import { toast } from "react-toastify";
+import type { Room } from "@/api/room-api";
 
 
 interface Props {
-  roomId: string
+  room: Room;
 }
 
 
-const ChatUIExample: React.FC<Props> = ({ roomId }) => {
+const ChatUIExample: React.FC<Props> = ({ room: { id: roomId, title: roomTitle } }) => {
   const queryClient = useQueryClient();
 
   const [input, setInput] = useState("");
@@ -197,10 +198,10 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" height="500px" border="1px solid #ccc">
+    <Box display="flex" flexDirection="column" height="60vh" border="1px solid #ccc">
       {/* Header */}
       <Box p={1} display="flex" justifyContent="space-between">
-        <Typography variant="h6">Chat</Typography>
+        <Typography variant="h6">Chatting with {roomTitle}</Typography>
         {selected.length > 0 && (
           <Button
             startIcon={<DeleteIcon />}
@@ -291,7 +292,7 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
 
       {/* Input */}
       <Box display="flex" p={1} gap={1}>
-        <IconButton onClick={() => fileRef.current?.click()}>
+        {/* <IconButton onClick={() => fileRef.current?.click()}>
           <AttachFileIcon />
         </IconButton>
         <input
@@ -300,7 +301,7 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
           ref={fileRef}
           onChange={handleFileChange}
           accept="image/*,.pdf,.zip"
-        />
+        /> */}
 
         <TextField
           fullWidth
@@ -308,6 +309,11 @@ const ChatUIExample: React.FC<Props> = ({ roomId }) => {
           placeholder="Type a message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSend();
+            }
+          }}
         />
 
         <IconButton color="primary" onClick={handleSend}>
